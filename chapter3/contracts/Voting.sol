@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18; //We have to specify what version of the compiler this code will use
+pragma solidity ^0.5.16; //We have to specify what version of the compiler this code will use
 
 contract Voting {
 
@@ -38,7 +38,7 @@ contract Voting {
   /* When the contract is deployed on the blockchain, we will initialize
    the total number of tokens for sale, cost per token and all the candidates
    */
-  function Voting(uint tokens, uint pricePerToken, bytes32[] candidateNames) public {
+  constructor (uint tokens, uint pricePerToken, bytes32[] memory candidateNames) public {
     candidateList = candidateNames;
     totalTokens = tokens;
     balanceTokens = tokens;
@@ -75,7 +75,7 @@ contract Voting {
   }
 
   // Return the sum of all the tokens used by this voter.
-  function totalTokensUsed(uint[] _tokensUsedPerCandidate) private pure returns (uint) {
+  function totalTokensUsed(uint[] memory _tokensUsedPerCandidate) private pure returns (uint) {
     uint totalUsedTokens = 0;
     for(uint i = 0; i < _tokensUsedPerCandidate.length; i++) {
       totalUsedTokens += _tokensUsedPerCandidate[i];
@@ -111,7 +111,7 @@ contract Voting {
     return totalTokens - balanceTokens;
   }
 
-  function voterDetails(address user) view public returns (uint, uint[]) {
+  function voterDetails(address user) view public returns (uint, uint[] memory) {
     return (voterInfo[user].tokensBought, voterInfo[user].tokensUsedPerCandidate);
   }
 
@@ -122,11 +122,11 @@ contract Voting {
    check to make sure only the owner of this contract can cash out.
    */
 
-  function transferTo(address account) public {
-    account.transfer(this.balance);
+  function transferTo(address payable account) public {
+    account.transfer(balanceTokens);
   }
 
-  function allCandidates() view public returns (bytes32[]) {
+  function allCandidates() view public returns (bytes32[] memory) {
     return candidateList;
   }
 
